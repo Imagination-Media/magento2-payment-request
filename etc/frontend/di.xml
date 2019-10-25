@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * W3C Payment Request (https://www.w3.org/TR/payment-request/)
+ *
+ * Add the W3C payment request api to Magento 2
+ *
+ * @package     ImaginationMedia\PaymentRequest
+ * @author      Igor Ludgero Miura <igor@imaginationmedia.com>
+ * @copyright   Copyright (c) 2019 Imagination Media (https://www.imaginationmedia.com/)
+ * @license     https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Customer\CustomerData\SectionPoolInterface">
+    <arguments>
+        <argument name="sectionSourceMap" xsi:type="array">
+            <item name="payment-request" xsi:type="string">ImaginationMedia\PaymentRequest\CustomerData\PaymentRequest</item>
+        </argument>
+    </arguments>
+</type>
+</config>

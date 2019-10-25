@@ -1,0 +1,37 @@
+{
+  "name": "imaginationmedia/magento2-payment-request",
+  "description": "W3C Web Payments for Magento 2",
+  "version" : "1.0.0",
+  "require": {
+    "php": ">=7.0",
+    "magento/framework": ">=102.0",
+    "magento/module-backend": ">=101.0",
+    "magento/module-checkout": ">=100.3",
+    "magento/module-payment": ">=100.3",
+    "magento/module-quote" : ">=100.3",
+    "magento/module-sales": ">=102.0",
+    "magento/module-sales-sequence": ">=100.3",
+    "magento/module-shipping": ">=100.3",
+    "magento/module-braintree": ">=100.3"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0"
+  ],
+  "authors": [
+    {
+      "name": "Igor Ludgero Miura",
+      "email": "igor@imaginationmedia.com",
+      "homepage": "http://www.imaginationmedia.com/",
+      "role": "Lead Developer"
+    }
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "ImaginationMedia\\PaymentRequest\\": ""
+    }
+  }
+}

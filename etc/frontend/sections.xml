@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * W3C Payment Request (https://www.w3.org/TR/payment-request/)
+ *
+ * Add the W3C payment request api to Magento 2
+ *
+ * @package     ImaginationMedia\PaymentRequest
+ * @author      Igor Ludgero Miura <igor@imaginationmedia.com>
+ * @copyright   Copyright (c) 2019 Imagination Media (https://www.imaginationmedia.com/)
+ * @license     https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Customer:etc/sections.xsd">
+    <action name="checkout/cart/add">
+        <section name="payment-request"/>
+    </action>
+    <action name="checkout/cart/delete">
+        <section name="payment-request"/>
+    </action>
+    <action name="checkout/cart/updatePost">
+        <section name="payment-request"/>
+    </action>
+    <action name="checkout/cart/updateItemOptions">
+        <section name="payment-request"/>
+    </action>
+    <action name="checkout/cart/couponPost">
+        <section name="payment-request"/>
+    </action>
+    <action name="checkout/cart/estimatePost">
+        <section name="payment-request"/>
+    </action>
+    <action name="checkout/cart/estimateUpdatePost">
+        <section name="payment-request"/>
+    </action>
+    <action name="checkout/onepage/saveOrder">
+        <section name="payment-request"/>
+    </action>
+    <action name="checkout/sidebar/removeItem">
+        <section name="payment-request"/>
+    </action>
+    <action name="checkout/sidebar/updateItemQty">
+        <section name="payment-request"/>
+    </action>
+    <action name="checkout/onepage/success">
+        <section name="payment-request"/>
+    </action>
+    <action name="paymentRequest/checkout/index">
+        <section name="payment-request"/>
+    </action>
+    <action name="customer/account/loginPost">
+        <section name="payment-request"/>
+    </action>
+    <action name="customer/account/logout">
+        <section name="payment-request"/>
+    </action>
+</config>

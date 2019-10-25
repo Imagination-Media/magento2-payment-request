@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * W3C Payment Request (https://www.w3.org/TR/payment-request/)
+ *
+ * Add the W3C payment request api to Magento 2
+ *
+ * @package     ImaginationMedia\PaymentRequest
+ * @author      Igor Ludgero Miura <igor@imaginationmedia.com>
+ * @copyright   Copyright (c) 2019 Imagination Media (https://www.imaginationmedia.com/)
+ * @license     https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="payment">
+            <group id="payment_request" translate="label,comment" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Payment Request API</label>
+                <comment><![CDATA[This solution allows Magento to get address and payment data from the browser, so, customers can use their saved data to checkout.]]></comment>
+                <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="button_mode" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable</label>
+                    <comment><![CDATA[You can replace the checkout button, so, customers will always view the payments request popup when try to go to checkout. Or you can show a separated button where they can use the payment request api.]]></comment>
+                    <source_model>ImaginationMedia\PaymentRequest\Model\System\Config\Source\ButtonMode</source_model>
+                </field>
+                <group id="payments" translate="label,comment" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Payment Methods</label>
+                    <comment><![CDATA[Configure all the payment methods.]]></comment>
+                    <group id="paypal" translate="label,comment" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>PayPal Express*</label>
+                        <comment>This payment method is not ready for production. It stills under development.</comment>
+                        <field id="enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                            <label>Enable PayPal Express</label>
+                            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        </field>
+                        <field id="sort_order" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                            <label>Sort Order</label>
+                            <depends>
+                                <field id="payment/payment_request/payments/paypal/enable">1</field>
+                            </depends>
+                        </field>
+                    </group>
+                    <group id="card" translate="label,comment" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Credit/Debit Card</label>
+                        <field id="enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                            <label>Enable debit/cart payments</label>
+                            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        </field>
+                        <field id="card_types" translate="label" type="multiselect" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                            <label>Enable debit/cart payments</label>
+                            <source_model>ImaginationMedia\PaymentRequest\Model\System\Config\Source\CardPaymentTypes</source_model>
+                            <comment><![CDATA[This option should match the available credit/debit types that are available in your payment method.]]></comment>
+                            <depends>
+                                <field id="payment/payment_request/payments/card/enable">1</field>
+                            </depends>
+                        </field>
+                        <field id="card_flags" translate="label" type="multiselect" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                            <label>Enable debit/cart payments</label>
+                            <source_model>ImaginationMedia\PaymentRequest\Model\System\Config\Source\CardFlags</source_model>
+                            <comment><![CDATA[This option should match the available credit/debit types that are available in your payment method.]]></comment>
+                            <depends>
+                                <field id="payment/payment_request/payments/card/enable">1</field>
+                            </depends>
+                        </field>
+                        <field id="pre_paid" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                            <label>Allow pre paid payments</label>
+                            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                            <comment><![CDATA[This option should match the available credit/debit types that are available in your payment method.]]></comment>
+                            <depends>
+                                <field id="payment/payment_request/payments/card/enable">1</field>
+                            </depends>
+                        </field>
+                        <field id="payment_method" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+                            <label>Payment Method</label>
+                            <source_model>ImaginationMedia\PaymentRequest\Model\System\Config\Source\CardPaymentMethods</source_model>
+                            <comment><![CDATA[Select the payment method that is used to process debit/credit card payments.]]></comment>
+                            <depends>
+                                <field id="payment/payment_request/payments/card/enable">1</field>
+                            </depends>
+                        </field>
+                        <field id="sort_order" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
+                            <label>Sort Order</label>
+                            <depends>
+                                <field id="payment/payment_request/payments/card/enable">1</field>
+                            </depends>
+                        </field>
+                    </group>
+                </group>
+            </group>
+        </section>
+    </system>
+</config>

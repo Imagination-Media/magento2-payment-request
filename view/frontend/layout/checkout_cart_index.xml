@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * W3C Payment Request (https://www.w3.org/TR/payment-request/)
+ *
+ * Add the W3C payment request api to Magento 2
+ *
+ * @package     ImaginationMedia\PaymentRequest
+ * @author      Igor Ludgero Miura <igor@imaginationmedia.com>
+ * @copyright   Copyright (c) 2019 Imagination Media (https://www.imaginationmedia.com/)
+ * @license     https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+ -->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <referenceContainer name="checkout.cart.methods">
+        <block class="Magento\Framework\View\Element\Template" name="w3c.payment.button"
+               after="checkout.cart.methods.onepage.bottom" template="ImaginationMedia_PaymentRequest::checkout/cart/button.phtml">
+            <arguments>
+                <argument name="section" xsi:type="string">checkout</argument>
+                <argument name="position" xsi:type="number">1</argument>
+                <argument name="view_model" xsi:type="object">ImaginationMedia\PaymentRequest\ViewModel\Config</argument>
+            </arguments>
+        </block>
+    </referenceContainer>
+    <referenceBlock name="checkout.cart.methods.onepage.bottom">
+        <action method="setTemplate">
+            <argument name="template" xsi:type="string">ImaginationMedia_PaymentRequest::checkout/cart/onepage/link.phtml</argument>
+        </action>
+        <arguments>
+            <argument name="view_model" xsi:type="object">ImaginationMedia\PaymentRequest\ViewModel\Config</argument>
+        </arguments>
+    </referenceBlock>
+</page>

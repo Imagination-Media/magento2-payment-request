@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * W3C Payment Request (https://www.w3.org/TR/payment-request/)
+ *
+ * Add the W3C payment request api to Magento 2
+ *
+ * @package     ImaginationMedia\PaymentRequest
+ * @author      Igor Ludgero Miura <igor@imaginationmedia.com>
+ * @copyright   Copyright (c) 2019 Imagination Media (https://www.imaginationmedia.com/)
+ * @license     https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+
+use ImaginationMedia\PaymentRequest\ViewModel\Config;
+
+/**
+ * @var $this \Magento\Framework\View\Element\Template
+ * @var $viewModel Config
+ */
+$viewModel = $this->getViewModel();
+?>
+
+<?php if ($viewModel->isEnabled() &&
+    $viewModel->getButtonMode() === Config::BUTTON_MODE_ADDITIONAL_BUTTON) : ?>
+    <button id="w3cPaymentRequest" type="button" style="display: none; background: transparent; border: none; box-shadow: none;">
+        <img src="<?php echo $this->getViewFileUrl('ImaginationMedia_PaymentRequest::images/google_checkout.png'); ?>" />
+    </button>
+    <script>
+        require([
+            'jquery',
+            'ImaginationMedia_PaymentRequest/js/checkout/paymentRequest'
+        ], function ($, paymentRequest) {
+            'use strict';
+            if (paymentRequest.isAvailable()) {
+                $("#w3cPaymentRequest").show();
+                $("#w3cPaymentRequest").click(function () {
+                    paymentRequest.init();
+                });
+            }
+        });
+    </script>
+<?php endif; ?>

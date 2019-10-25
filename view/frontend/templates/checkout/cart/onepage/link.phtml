@@ -1,0 +1,64 @@
+<?php
+
+/**
+ * W3C Payment Request (https://www.w3.org/TR/payment-request/)
+ *
+ * Add the W3C payment request api to Magento 2
+ *
+ * @package     ImaginationMedia\PaymentRequest
+ * @author      Igor Ludgero Miura <igor@imaginationmedia.com>
+ * @copyright   Copyright (c) 2019 Imagination Media (https://www.imaginationmedia.com/)
+ * @license     https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+
+/**
+ * @var $block \Magento\Checkout\Block\Onepage\Link
+ * @var $viewModel \ImaginationMedia\PaymentRequest\ViewModel\Config
+ */
+
+$viewModel = $block->getViewModel();
+
+?>
+<?php if ($block->isPossibleOnepageCheckout() &&
+    (!$viewModel->isEnabled() || $viewModel->getButtonMode() === $viewModel::BUTTON_MODE_ADDITIONAL_BUTTON)) : ?>
+    <button type="button"
+            data-role="proceed-to-checkout"
+            title="<?= /* @escapeNotVerified */
+            __('Proceed to Checkout') ?>"
+            data-mage-init='{"Magento_Checkout/js/proceed-to-checkout":{"checkoutUrl":"<?= /* @escapeNotVerified */
+            $block->getCheckoutUrl() ?>"}}'
+            class="action primary checkout<?= ($block->isDisabled()) ? ' disabled' : '' ?>"
+            <?php if ($block->isDisabled()) : ?>disabled="disabled"<?php endif; ?>>
+        <span><?= /* @escapeNotVerified */
+            __('Proceed to Checkout') ?></span>
+    </button>
+<?php elseif ($viewModel->isEnabled() &&
+    $viewModel->getButtonMode() === $viewModel::BUTTON_MODE_REPLACE_CHECKOUT) : ?>
+    <button type="button"
+            data-role="proceed-to-checkout"
+            id="paymentRequestButton"
+            title="<?= /* @escapeNotVerified */
+            __('Proceed to Checkout') ?>"
+            class="action primary checkout<?= ($block->isDisabled()) ? ' disabled' : '' ?> payment-request"
+            <?php if ($block->isDisabled()) : ?>disabled="disabled"<?php endif; ?>>
+        <span><?= /* @escapeNotVerified */
+            __('Proceed to Checkout') ?></span>
+    </button>
+    <script>
+        require([
+            'jquery',
+            'ImaginationMedia_PaymentRequest/js/checkout/paymentRequest'
+        ], function ($, paymentRequest) {
+            'use strict';
+            if (paymentRequest.isAvailable()) {
+                $("#paymentRequestButton").click(function () {
+                    paymentRequest.init();
+                });
+            } else {
+                $("#paymentRequestButton").click(function () {
+                    window.location.href = "<?= $block->getUrl("checkout") ?>";
+                });
+            }
+        });
+    </script>
+<?php endif ?>
