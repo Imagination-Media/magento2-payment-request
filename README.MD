@@ -47,6 +47,6 @@ You also need Chrome 79 or newest to be able to enable this option.
 We have a demo website where you can test the Payment Request Api module. The demo website is available at https://innovations.imaginationmedia.com/.
 
 ## License
-This is a Magento community project, lead by [Imagination Media](https://www.imaginationmedia.com/) in partnership with [PayPal](https://www.paypal.com/) and [Mobile Optimization Initiative](https://www.mobileoptimized.org/).
+This is a Magento Community Engineering project, lead by [Imagination Media](https://www.imaginationmedia.com/) in partnership with [PayPal](https://www.paypal.com/) and [Mobile Optimization Initiative](https://www.mobileoptimized.org/).
 
 All code is under the OSL 3.0 license.
