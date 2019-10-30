@@ -49,4 +49,4 @@ We have a demo website where you can test the Payment Request Api module. The de
 ## License
 This is a Magento community project, lead by [Imagination Media](https://www.imaginationmedia.com/) in partnership with [PayPal](https://www.paypal.com/) and [Mobile Optimization Initiative](https://www.mobileoptimized.org/).
 
-All this code is under the OSL 3.0 license.
+All code is under the OSL 3.0 license.
