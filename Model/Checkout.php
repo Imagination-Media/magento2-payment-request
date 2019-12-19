@@ -15,14 +15,14 @@ declare(strict_types=1);
 
 namespace ImaginationMedia\PaymentRequest\Model;
 
-use ImaginationMedia\PaymentRequest\Model\Address;
+use ImaginationMedia\PaymentRequest\Model\Address\Action as Address;
 use ImaginationMedia\PaymentRequest\Model\Checkout\Braintree as BraintreeCheckout;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Customer\Api\CustomerRepositoryInterface as CustomerRepository;
 use Magento\Quote\Api\CartManagementInterface as CartManagement;
 use Magento\Quote\Api\CartRepositoryInterface as CartRepository;
 use Magento\Quote\Model\Quote;
-use Magento\Quote\Model\Quote\Address\Rate as ShippingRate;
+use Magento\Quote\Model\Quote\Address\RateFactory as ShippingRateFactory;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
 
 class Checkout
@@ -48,9 +48,9 @@ class Checkout
     protected $customerRepository;
 
     /**
-     * @var ShippingRate
+     * @var ShippingRateFactory
      */
-    protected $shippingRate;
+    protected $shippingRateFactory;
 
     /**
      * @var CartManagement
@@ -73,7 +73,7 @@ class Checkout
      * @param CartRepository $cartRepository
      * @param StoreManager $storeManager
      * @param CustomerRepository $customerRepository
-     * @param ShippingRate $shippingRate
+     * @param ShippingRateFactory $shippingRateFactory
      * @param CartManagement $cartManagement
      * @param BraintreeCheckout $braintreeCheckout
      * @param Address $address
@@ -83,7 +83,7 @@ class Checkout
         CartRepository $cartRepository,
         StoreManager $storeManager,
         CustomerRepository $customerRepository,
-        ShippingRate $shippingRate,
+        ShippingRateFactory $shippingRateFactory,
         CartManagement $cartManagement,
         BraintreeCheckout $braintreeCheckout,
         Address $address
@@ -92,7 +92,7 @@ class Checkout
         $this->cartRepository = $cartRepository;
         $this->storeManager = $storeManager;
         $this->customerRepository = $customerRepository;
-        $this->shippingRate = $shippingRate;
+        $this->shippingRateFactory = $shippingRateFactory;
         $this->cartManagement = $cartManagement;
         $this->braintreeCheckout = $braintreeCheckout;
         $this->address = $address;
@@ -158,14 +158,14 @@ class Checkout
             /**
              * Set billing and shipping addreess
              */
-            $magentoBillingAddress = $this->address->convertAddressToMagentoAdress(
+            $magentoBillingAddress = $this->address->execute(
                 $billingAddress,
                 $contactInfo,
                 $customerId
             );
             $cart->getBillingAddress()->addData($magentoBillingAddress);
 
-            $magentoShippingAddress = $this->address->convertAddressToMagentoAdress(
+            $magentoShippingAddress = $this->address->execute(
                 $shippingAddress,
                 $contactInfo,
                 $customerId
@@ -175,20 +175,21 @@ class Checkout
             /**
              * Set shipping method
              */
-            $this->shippingRate
+            $shippingRate = $this->shippingRateFactory->create();
+            $shippingRate
                 ->setCode($shippingMethod)
                 ->getPrice();
             $shippingAddress = $cart->getShippingAddress();
             $shippingAddress->setCollectShippingRates(true)
                 ->collectShippingRates()
                 ->setShippingMethod($shippingMethod);
-            $cart->getShippingAddress()->addShippingRate($this->shippingRate);
+            $cart->getShippingAddress()->addShippingRate($shippingRate);
 
             /**
              * Set payment
              */
             if ($paymentInfo["code"] === "braintree") {
-                $this->braintreeCheckout->setPaymentInfo($cart, $paymentInfo);
+                $this->braintreeCheckout->setPaymentInfo($cart->getPayment(), $paymentInfo);
             }
 
             /**

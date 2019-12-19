@@ -16,21 +16,23 @@ declare(strict_types=1);
 namespace ImaginationMedia\PaymentRequest\Model\Checkout;
 
 use Magento\Braintree\Observer\DataAssignObserver;
-use Magento\Quote\Api\Data\CartInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Quote\Model\Quote\Payment;
 
 class Braintree
 {
     /**
      * Set Braintree payment info
-     * @param CartInterface $cart
+     * @param Payment $payment
      * @param array $paymentInfo
+     * @throws LocalizedException
      */
-    public function setPaymentInfo(CartInterface &$cart, array $paymentInfo) : void
+    public function setPaymentInfo(Payment $payment, array $paymentInfo) : void
     {
-        $cart->getPayment()->importData([
+        $payment->importData([
             'method' => $paymentInfo["code"]
         ]);
-        $cart->getPayment()->setAdditionalInformation([
+        $payment->setAdditionalInformation([
             DataAssignObserver::PAYMENT_METHOD_NONCE => $paymentInfo["token"]
         ]);
     }

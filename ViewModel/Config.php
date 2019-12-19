@@ -357,6 +357,15 @@ class Config implements ArgumentInterface
         $quoteId = $quote->getId();
 
         /**
+         * Generate a quote id if null
+         */
+        if ($quoteId === null) {
+            $quote->collectTotals();
+            $quote->save();
+            $quoteId = $quote->getId();
+        }
+
+        /**
          * Get quote items
          */
         $quoteItemTable = $this->connection->getTableName("quote_item");

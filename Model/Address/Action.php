@@ -13,12 +13,12 @@
 
 declare(strict_types=1);
 
-namespace ImaginationMedia\PaymentRequest\Model;
+namespace ImaginationMedia\PaymentRequest\Model\Address;
 
 use Magento\Directory\Model\CountryFactory;
 use Magento\Directory\Model\ResourceModel\Region\CollectionFactory as RegionCollectionFactory;
 
-class Address
+class Action
 {
     /**
      * @var CountryFactory
@@ -50,7 +50,7 @@ class Address
      * @param int $customerId
      * @return array
      */
-    public function convertAddressToMagentoAdress(
+    public function execute(
         array $address,
         array $contactInfo = [],
         int $customerId = null
@@ -73,19 +73,17 @@ class Address
         $region = $regionCollection->getFirstItem();
 
         return [
-            "firstname" => $names[0],
-            "lastname" => end($names),
+            "firstname" => (is_array($names) && isset($names[0])) ? (string)$names[0] : '',
+            "lastname" => (is_array($names)) ? (string)end($names) : '',
             "country_id" => $country->getId(),
-            "region_id" => ($region->getData("region_id"))
-                ? $region->getData("region_id") : null,
-            "region" => $address["region"],
-            "city" => $address["city"],
-            "postcode" => $address["postalCode"],
-            "customer_id" => ($customerId !== null)
-                ? $customerId : null,
-            "street" => (key_exists("addressLine", $address))
-                ? $address["addressLine"][0] : "",
-            "telephone" => $address["phone"]
+            "region_id" => $region->getRegionId(),
+            "region" => isset($address["region"]) ? (string)$address["region"] : "",
+            "city" => isset($address["city"]) ? (string)$address["city"] : "",
+            "postcode" => isset($address["postalCode"]) ? (string)$address["postalCode"] : "",
+            "customer_id" => $customerId,
+            "street" => (isset($address["addressLine"]) && is_array($address))
+                ? (string)$address["addressLine"][0] : "",
+            "telephone" => isset($address["phone"]) ? (string)$address["phone"] : ""
         ];
     }
 }

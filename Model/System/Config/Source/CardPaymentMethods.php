@@ -24,18 +24,22 @@ class CardPaymentMethods implements OptionSourceInterface
      */
     protected $paymentConfig;
 
-    const SUPPORTED_PAYMENT_METHODS = [
-        "braintree"
-    ];
+    /**
+     * @var array
+     */
+    protected $paymentMethods;
 
     /**
      * CardPaymentMethods constructor.
      * @param PaymentConfig $paymentConfig
+     * @param array $paymentMethods
      */
     public function __construct(
-        PaymentConfig $paymentConfig
+        PaymentConfig $paymentConfig,
+        array $paymentMethods = []
     ) {
         $this->paymentConfig = $paymentConfig;
+        $this->paymentMethods = $paymentMethods;
     }
 
     /**
@@ -51,7 +55,7 @@ class CardPaymentMethods implements OptionSourceInterface
          * @var $paymentMethod MethodInterface
          */
         foreach ($availablePaymentMethods as $code => $paymentMethod) {
-            if (in_array($code, self::SUPPORTED_PAYMENT_METHODS)) {
+            if (in_array($code, $this->paymentMethods)) {
                 $methods[] = [
                     "value" => $code,
                     "label" => "[" . $code . "] " . $paymentMethod->getTitle()

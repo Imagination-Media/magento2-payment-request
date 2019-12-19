@@ -17,6 +17,8 @@ namespace ImaginationMedia\PaymentRequest\CustomerData;
 
 use ImaginationMedia\PaymentRequest\ViewModel\Config;
 use Magento\Customer\CustomerData\SectionSourceInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 
 class PaymentRequest implements SectionSourceInterface
 {
@@ -26,41 +28,48 @@ class PaymentRequest implements SectionSourceInterface
     protected $paymentRequestConfig;
 
     /**
+     * @var array
+     */
+    protected $paymentComponents;
+
+    /**
      * PaymentRequest constructor.
      * @param Config $paymentRequestConfig
+     * @param array $paymentComponents
      */
     public function __construct(
-        Config $paymentRequestConfig
+        Config $paymentRequestConfig,
+        array $paymentComponents = []
     ) {
         $this->paymentRequestConfig = $paymentRequestConfig;
+        $this->paymentComponents = $paymentComponents;
     }
 
     /**
      * Get section config
      * @return array
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
     public function getSectionData()
     {
-        try {
-            $data = [
-                "paymentRequestApi" => [
-                    "enabled" => $this->paymentRequestConfig->isEnabled(),
-                    "cardConfig" => $this->paymentRequestConfig->getCardConfig(),
-                    "paypalConfig" => $this->paymentRequestConfig->getPayPalConfig(),
-                    "urls" => $this->paymentRequestConfig->getUrls(),
-                    "buttonMode" => $this->paymentRequestConfig->getButtonMode(),
-                    "cartItems" => $this->paymentRequestConfig->getQuoteItems(),
-                    "quoteTotal" => $this->paymentRequestConfig->getQuoteTotal(),
-                    "currency" => $this->paymentRequestConfig->getCurrency(),
-                    "discount" => $this->paymentRequestConfig->getDiscount(),
-                    "customerId" => $this->paymentRequestConfig->getCustomerId()
-                ]
-            ];
+        $data = [
+            "paymentRequestApi" => [
+                "enabled" => $this->paymentRequestConfig->isEnabled(),
+                "cardConfig" => $this->paymentRequestConfig->getCardConfig(),
+                "paypalConfig" => $this->paymentRequestConfig->getPayPalConfig(),
+                "urls" => $this->paymentRequestConfig->getUrls(),
+                "buttonMode" => $this->paymentRequestConfig->getButtonMode(),
+                "cartItems" => $this->paymentRequestConfig->getQuoteItems(),
+                "quoteTotal" => $this->paymentRequestConfig->getQuoteTotal(),
+                "currency" => $this->paymentRequestConfig->getCurrency(),
+                "discount" => $this->paymentRequestConfig->getDiscount(),
+                "customerId" => $this->paymentRequestConfig->getCustomerId(),
+                "paymentComponents" => $this->paymentComponents
+            ]
+        ];
 
-            $data["paymentRequestApi"]["quoteId"] = $this->paymentRequestConfig->getQuoteId();
-            return $data;
-        } catch (\Exception $ex) {
-            return [];
-        }
+        $data["paymentRequestApi"]["quoteId"] = $this->paymentRequestConfig->getQuoteId();
+        return $data;
     }
 }

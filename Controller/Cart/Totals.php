@@ -15,189 +15,59 @@ declare(strict_types=1);
 
 namespace ImaginationMedia\PaymentRequest\Controller\Cart;
 
-use ImaginationMedia\PaymentRequest\Model\Address;
-use Magento\Customer\Model\Session;
+use ImaginationMedia\PaymentRequest\Model\Cart\Total;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
-use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
-use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Quote\Api\CartRepositoryInterface;
-use Magento\Quote\Model\Quote;
-use Magento\Quote\Model\Quote\Address\Rate as ShippingRate;
-use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\Exception\LocalizedException;
 
 class Totals extends Action
 {
-    /**
-     * @var StoreManagerInterface
-     */
-    protected $storeManager;
-
-    /**
-     * @var CartRepositoryInterface
-     */
-    protected $cartRepository;
-
-    /**
-     * @var ShippingRate
-     */
-    protected $shippingRate;
-
-    /**
-     * @var Session
-     */
-    protected $session;
-
     /**
      * @var JsonFactory
      */
     protected $jsonFactory;
 
     /**
-     * @var Address
+     * @var Total
      */
-    protected $address;
-
-    const REQUIRED_FIELDS = [
-        "quoteId",
-        "shippingAddress",
-        "shippingMethod"
-    ];
+    protected $totalCalculator;
 
     /**
      * Totals constructor.
      * @param Context $context
-     * @param StoreManagerInterface $storeManager
-     * @param CartRepositoryInterface $cartRepository
-     * @param ShippingRate $shippingRate
-     * @param Session $session
      * @param JsonFactory $jsonFactory
-     * @param Address $address
+     * @param Total $totalCalculator
      */
     public function __construct(
         Context $context,
-        StoreManagerInterface $storeManager,
-        CartRepositoryInterface $cartRepository,
-        ShippingRate $shippingRate,
-        Session $session,
         JsonFactory $jsonFactory,
-        Address $address
+        Total $totalCalculator
     ) {
         parent::__construct($context);
-        $this->storeManager = $storeManager;
-        $this->cartRepository = $cartRepository;
-        $this->shippingRate = $shippingRate;
-        $this->session = $session;
         $this->jsonFactory = $jsonFactory;
-        $this->address = $address;
+        $this->totalCalculator = $totalCalculator;
     }
 
     /**
-     * Get cart totals
-     * @return bool|ResponseInterface|Json|ResultInterface
+     * @return Json
      * @throws NoSuchEntityException
+     * @throws LocalizedException
      */
-    public function execute()
+    public function execute() : Json
     {
         $params = $this->getRequest()->getParams();
-        $error = "";
-        $totals = [];
         $jsonResult = $this->jsonFactory->create();
 
-        /**
-         * Validate info
-         */
-        foreach (self::REQUIRED_FIELDS as $REQUIRED_FIELD) {
-            if (!isset($params[$REQUIRED_FIELD]) ||
-                in_array($params[$REQUIRED_FIELD], ["undefined", "null"])) {
-                $error = __("Not provided " . $REQUIRED_FIELD . " field.");
-            }
+        $result = $this->totalCalculator->getTotals($params);
+
+        if ($result['error'] !== "") {
+            $result['totals'] = [];
         }
 
-        if ($error === "") {
-            $quoteId = (int)$params["quoteId"];
-            $store = $this->storeManager->getStore();
-            $cart = $this->cartRepository->get($quoteId);
-            $customerId = $this->session->isLoggedIn() ? (int)$this->session->getCustomerId() : 0;
-
-            /**
-             * Validate if there is an active quote
-             */
-            if (!$cart instanceof Quote || is_null($cart->getData("entity_id"))) {
-                $error = __("Invalid cart");
-            }
-
-            /**
-             * Check if cart is empty
-             */
-            if ((int)$cart->getItemsCount() === 0) {
-                $error = __("Empty cart");
-            }
-
-            $cart->setStore($store);
-            $cart->setCurrency();
-
-            /**
-             * Set shipping addreess
-             */
-            $magentoAddress = $this->address->convertAddressToMagentoAdress(
-                $params["shippingAddress"],
-                [],
-                $customerId
-            );
-            $cart->getShippingAddress()->addData($magentoAddress);
-
-            /**
-             * Set shipping method
-             */
-            $shippingMethod = $params["shippingMethod"]["carrier_code"] . "_" .
-                $params["shippingMethod"]["method_code"];
-            $this->shippingRate
-                ->setCode($shippingMethod)
-                ->getPrice();
-            $shippingAddress = $cart->getShippingAddress();
-            $shippingAddress->setCollectShippingRates(true)
-                ->collectShippingRates()
-                ->setShippingMethod($shippingMethod);
-            $cart->getShippingAddress()->addShippingRate($this->shippingRate);
-
-            /**
-             * Apply all the changes
-             */
-            $cart->collectTotals();
-            $cart->save();
-
-            $magentoTotals = $cart->getTotals();
-
-            foreach ($magentoTotals as $total) {
-                if ($total["value"] > 0) {
-                    $totals[$total["code"]] = $total["value"];
-                }
-            }
-
-            /**
-             * Add discounts by coupon code
-             */
-            $couponCode = (string)$cart->getCouponCode();
-            if ($couponCode !== "") {
-                $totals["discount"] = [
-                    "label" => sprintf(__("Discount (%s)"), $cart->getCouponCode()),
-                    "amount" => -($cart->getSubtotal() - $cart->getSubtotalWithDiscount())
-                ];
-            }
-        }
-
-        if ($error !== "") {
-            $totals = [];
-        }
-
-        $jsonResult->setData([
-            "error" => $error,
-            "totals" => $totals
-        ]);
+        $jsonResult->setData($result);
 
         return $jsonResult;
     }

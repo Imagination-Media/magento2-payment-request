@@ -60,7 +60,7 @@ define([
                     return false;
                 }
 
-                let paymentRequestApi = customerData.get('payment-request')().paymentRequestApi;
+                var paymentRequestApi = customerData.get('payment-request')().paymentRequestApi;
                 if (paymentRequestApi &&
                     paymentRequestApi.enabled &&
                     paymentRequestApi.buttonMode === 1 &&

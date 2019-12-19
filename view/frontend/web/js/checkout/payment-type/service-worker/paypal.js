@@ -1,5 +1,3 @@
-<?php
-
 /**
  * W3C Payment Request (https://www.w3.org/TR/payment-request/)
  *
@@ -11,14 +9,16 @@
  * @license     https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
  */
 
-/**
- * @var $block \Magento\Framework\View\Element\Js\Components
- */
+define([
+    'mage/translate',
+], function ($t) {
+    'use strict';
 
-?>
-
-<div id="paymentRequest" data-bind="scope: 'paymentRequest'">
-    <script type="text/x-magento-init">
-        {"#paymentRequest": {"Magento_Ui/js/core/app": <?php echo $block->getJsLayout();?>}}
-    </script>
-</div>
+    return {
+        process: function (paymentRequest, paymentResponse, w3cPaymentRequest) {
+            /**
+             * Nothing happens
+             */
+        }
+    };
+});

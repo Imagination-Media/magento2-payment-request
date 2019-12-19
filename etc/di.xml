@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * W3C Payment Request (https://www.w3.org/TR/payment-request/)
+ *
+ * Add the W3C payment request api to Magento 2
+ *
+ * @package     ImaginationMedia\PaymentRequest
+ * @author      Igor Ludgero Miura <igor@imaginationmedia.com>
+ * @copyright   Copyright (c) 2019 Imagination Media (https://www.imaginationmedia.com/)
+ * @license     https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Cart Total validators -->
+    <type name="ImaginationMedia\PaymentRequest\Model\Cart\Validator">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="params" xsi:type="object">ImaginationMedia\PaymentRequest\Model\Cart\Validator\Params</item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- Available payment methods -->
+    <type name="ImaginationMedia\PaymentRequest\Model\System\Config\Source\CardPaymentMethods">
+        <arguments>
+            <argument name="paymentMethods" xsi:type="array">
+                <item name="braintree" xsi:type="string">braintree</item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- Payment components -->
+    <type name="ImaginationMedia\PaymentRequest\CustomerData\PaymentRequest">
+        <arguments>
+            <argument name="paymentComponents" xsi:type="array">
+                <item name="braintree" xsi:type="string">ImaginationMedia_PaymentRequest/js/checkout/payment-type/basic-card/braintree</item>
+                <item name="paypal" xsi:type="string">ImaginationMedia_PaymentRequest/js/checkout/payment-type/service-worker/paypal</item>
+            </argument>
+        </arguments>
+    </type>
+</config>
