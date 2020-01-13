@@ -157,9 +157,7 @@ class Total
             $magentoTotals = $cart->getTotals();
 
             foreach ($magentoTotals as $total) {
-                if ($total["value"] > 0) {
-                    $totals[$total["code"]] = $total["value"];
-                }
+                $totals[$total["code"]] = $total["value"];
             }
 
             /**
