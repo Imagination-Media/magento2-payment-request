@@ -10,10 +10,10 @@
  */
 
 define([
-    'https://js.braintreegateway.com/js/braintree-2.32.0.min.js',
+    'braintreeClientV2',
     'mage/translate',
     'jquery'
-], function (braintree, $t, $) {
+], function (braintreeClient, $t, $) {
     'use strict';
 
     return {
@@ -29,15 +29,30 @@ define([
                 paymentResponse.complete('fail');
             }
 
-            var client = new braintree.api.Client({clientToken: w3cPaymentRequest.cardConfig.additionalInfo.clientToken});
-            client.tokenizeCard({
+            var customerFullName = details.billingAddress.recipient;
+            var names = customerFullName.split(" ");
+            var finalData = {
                 number: details.cardNumber,
                 cardholderName: details.cardholderName,
                 expirationMonth: details.expiryMonth,
                 expirationYear: details.expiryYear,
                 cvv: details.cardSecurityCode,
-                billingAddress: details.billingAddress
-            }, function (err, nonce) {
+                billingAddress: {
+                    firstName : names[0],
+                    lastName : names.slice(-1)[0],
+                    company : details.billingAddress.organization,
+                    streetAddress : Object.values(details.billingAddress.addressLine).length > 0
+                        ? details.billingAddress.addressLine[0] : '',
+                    extendedAddress : Object.values(details.billingAddress.addressLine).length > 1
+                        ? details.billingAddress.addressLine[1] : '',
+                    locality : details.billingAddress.city,
+                    region : details.billingAddress.region,
+                    postalCode : details.billingAddress.postalCode,
+                    countryCodeAlpha2 : details.billingAddress.country
+                }
+            };
+            var client = new braintreeClient.api.Client({clientToken: w3cPaymentRequest.cardConfig.additionalInfo.clientToken});
+            client.tokenizeCard(finalData, function (err, nonce) {
                 if (!err) {
                     var params = {
                         paymentMethod: "braintree",
@@ -67,7 +82,8 @@ define([
                         }
                     });
                 } else {
-                    console.log(err);
+                    console.log(err.toString());
+                    console.log(nonce);
                     paymentResponse.complete('fail');
                 }
             });

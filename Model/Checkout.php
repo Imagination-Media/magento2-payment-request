@@ -156,7 +156,7 @@ class Checkout
             }
 
             /**
-             * Set billing and shipping addreess
+             * Set billing and shipping address
              */
             $magentoBillingAddress = $this->address->execute(
                 $billingAddress,

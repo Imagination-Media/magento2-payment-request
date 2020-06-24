@@ -16,5 +16,8 @@ var config = {
                 'ImaginationMedia_PaymentRequest/js/sidebar': true
             }
         }
+    },
+    paths: {
+        braintreeClientV2: 'https://js.braintreegateway.com/js/braintree-2.32.0.min'
     }
 };
